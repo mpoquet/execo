@@ -942,13 +942,15 @@ class Process(ProcessBase):
     True
     """
 
-    def __init__(self, cmd, shell = False,
+    def __init__(self, cmd, shell = False, cwd = None,
                  pty = False, kill_subprocesses = None,
                  **kwargs):
         """:param cmd: string or tuple containing the command and args to run.
 
         :param shell: Whether or not to use a shell to run the
           cmd. See ``subprocess.Popen``.
+
+        :param cwd: The process working directory. See ``subprocess.Popen``.
 
         :param pty: If True, open a pseudo tty and connect process's
           stdin and stdout to it (stderr is still connected as a
@@ -963,6 +965,8 @@ class Process(ProcessBase):
         super(Process, self).__init__(cmd, **kwargs)
         self.shell = shell
         """Whether or not to use a shell to run the cmd. See ``subprocess.Popen``"""
+        self.cwd = cwd
+        """cwd: The process working directory. See ``subprocess.Popen``."""
         self.pty = pty
         """If True, open a pseudo tty and connect process's stdin and stdout to it
         (stderr is still connected as a pipe). Make process a session
@@ -1024,6 +1028,7 @@ class Process(ProcessBase):
     def _kwargs(self):
         kwargs = []
         if self.shell != False: kwargs.append("shell=%r" % (self.shell,))
+        if self.cwd != None: kwargs.append("cwd=%r" % (self.cwd,))
         if self.pty != False: kwargs.append("pty=%r" % (self.pty,))
         if self.kill_subprocesses != None: kwargs.append("kill_subprocesses=%r" % (self.kill_subprocesses,))
         return kwargs
@@ -1031,6 +1036,7 @@ class Process(ProcessBase):
     def _infos(self):
         infos = []
         if self.shell != False: infos.append("shell=%r" % (self.shell,))
+        if self.cwd != None: infos.append("cwd=%r" % (self.cwd,))
         if self.pty != False: infos.append("pty=%r" % (self.pty,))
         if self.kill_subprocesses != None: infos.append("kill_subprocesses=%r" % (self.kill_subprocesses,))
         infos.append("pid=%s" % (self.pid,))
@@ -1066,6 +1072,7 @@ class Process(ProcessBase):
                                                 stderr = subprocess.PIPE,
                                                 close_fds = True,
                                                 shell = self.shell,
+                                                cwd = self.cwd,
                                                 preexec_fn = lambda: os.setpgid(0, the_conductor.pgrp))
                 self.stdout_fd = self._ptymaster
                 self.stderr_fd = self.process.stderr.fileno()
@@ -1077,6 +1084,7 @@ class Process(ProcessBase):
                                                 stderr = subprocess.PIPE,
                                                 close_fds = True,
                                                 shell = self.shell,
+                                                cwd = self.cwd,
                                                 preexec_fn = lambda: os.setpgid(0, the_conductor.pgrp))
                 self.stdout_fd = self.process.stdout.fileno()
                 self.stderr_fd = self.process.stderr.fileno()
