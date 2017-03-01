@@ -18,6 +18,7 @@
 
 import threading, os, fcntl, math, sys
 import pickle as pickle
+from sortedcontainers import SortedSet as set
 if sys.version_info >= (3,):
     import pickle
 else:
