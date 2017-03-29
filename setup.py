@@ -32,7 +32,7 @@ def get_git_version():
     # returns git tag / sha as string
     # returns None if not available
     try:
-        p = subprocess.Popen(["git", "describe", "--tags", "--dirty", "--always"],
+        p = subprocess.Popen(["git", "describe", "--tags", "--dirty", "--always", "--abbrev=0"],
                              stdout = subprocess.PIPE, stderr = subprocess.PIPE,
                              universal_newlines = True)
     except EnvironmentError:
